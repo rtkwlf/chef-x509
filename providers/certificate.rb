@@ -92,6 +92,7 @@ action :create do
         # Generate the new CSR using the existing key
         csr = x509_generate_csr(
           key,
+          new_resource.digest,
           :common_name => new_resource.cn || new_resource.name,
           :city => node['x509']['city'],
           :state => node['x509']['state'],
@@ -115,6 +116,7 @@ action :create do
         # Generate the CSR, and sign it with a scratch CA to create a
         # temporary certificate.
         csr = x509_generate_csr(key,
+          new_resource.digest,
           :common_name => new_resource.cn || new_resource.name,
           :city => node['x509']['city'],
           :state => node['x509']['state'],
@@ -126,6 +128,7 @@ action :create do
         cert, ca = x509_issue_self_signed_cert(
           csr,
           new_resource.type,
+          new_resource.digest,
           :city => node['x509']['city'],
           :state => node['x509']['state'],
           :email => node['x509']['email'],
@@ -142,7 +145,8 @@ action :create do
         :ca => new_resource.ca,
         :date => Time.now.to_s,
         :type => new_resource.type,
-        :days => new_resource.days
+        :days => new_resource.days,
+        :digest => new_resource.digest
       }
 
       # write out the key
