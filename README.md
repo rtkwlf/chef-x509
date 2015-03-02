@@ -1,6 +1,8 @@
 Description
 ===========
 
+This is a reinstanation of the original chef-cookbook-ssl from https://github.com/VendaTech/chef-cookbook-ssl
+
 Cookbook to manage deployment of X509 certificates across an
 infrastructure.
 
@@ -284,9 +286,10 @@ Author:: Michael Hart (<michael.hart@arcticwolf.com>)
 Previous maintainers:
 
 Author:: Chris Andrews (<candrews@venda.com>)
+
 Author:: Zac Stevens (<zts@cryptocracy.com>)
 
-Copyright 2015 Arctic Wolf Networks
+Copyright 2011-2012 Venda Ltd
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
