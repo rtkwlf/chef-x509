@@ -279,10 +279,14 @@ TODO
 Licence and Author
 ==================
 
+Author:: Michael Hart (<michael.hart@arcticwolf.com>)
+
+Previous maintainers:
+
 Author:: Chris Andrews (<candrews@venda.com>)
 Author:: Zac Stevens (<zts@cryptocracy.com>)
 
-Copyright 2011-2012 Venda Ltd
+Copyright 2015 Arctic Wolf Networks
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
