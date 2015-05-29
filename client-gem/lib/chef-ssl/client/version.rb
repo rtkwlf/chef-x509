@@ -1,5 +1,5 @@
 module ChefSSL
   class Client
-    VERSION = '1.1.0'
+    VERSION = '1.1.1001'
   end
 end
