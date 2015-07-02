@@ -22,7 +22,7 @@ if node['x509']['key_vault']
   include_recipe "vt-gpg"
 end
 
-chef_gem "eassl2" do
+chef_gem "eassl3" do
   action :nothing
 end.run_action(:upgrade)
 

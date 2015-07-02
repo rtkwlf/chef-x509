@@ -40,8 +40,6 @@ command :issue do |c|
     unless options.type == 'server' || options.type == 'client'
       raise "type must be server or client"
     end
-    
-    client = ChefSSL::Client.new
 
     authority = ChefSSL::Client.load_authority(
       :password => ask("Enter CA passphrase:  ") { |q| q.echo = false },
@@ -61,7 +59,7 @@ command :issue do |c|
       :email => h['emailAddress']
     }
 
-    req = ChefSSL::Client::Request.create(key, options.type, name)
+    req = ChefSSL::Client::Request.create(options.__hash__.update({ :key => key, :name => name }))
     cert = authority.sign(req)
 
     if options.save

@@ -12,9 +12,9 @@ def x509_load_key(path)
   return EaSSL::Key.load(path)
 end
 
-def x509_generate_csr(key, name)
-  ea_name = EaSSL::CertificateName.new(name)
-  ea_csr  = EaSSL::SigningRequest.new(:name => ea_name, :key => key)
+def x509_generate_csr(info)
+  ea_name = EaSSL::CertificateName.new(info[:name])
+  ea_csr  = EaSSL::SigningRequest.new(info.merge({:name => ea_name}))
   ea_csr
 end
 
@@ -75,5 +75,5 @@ end
 #for a caname in the certificate_revocation_list data bag, return the path to the file
 def x509_get_crl_path(caname) 
   item = x509_get_crl(caname)
-  return "/etc/ssl/certs/#{item['hash']}.r0"  
+  return ::File.join(node['x509']['tls_root'], 'certs', "#{item['hash']}}.r0")
 end

@@ -29,10 +29,10 @@ module ChefSSL
         IssuedCertificate.new(self, cert)
       end
 
-      def self.create(key, type, options)
-        name = EaSSL::CertificateName.new(options)
-        csr  = EaSSL::SigningRequest.new(:name => name, :key => key)
-        self.new('localhost', { 'type' => type }, csr)
+      def self.create(options)
+        name = EaSSL::CertificateName.new(options[:name])
+        csr  = EaSSL::SigningRequest.new(options.update({ :name => name }))
+        self.new('localhost', { 'type' => options[:type] || 'server' }, csr)
       end
     end
   end
