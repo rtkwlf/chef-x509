@@ -90,16 +90,19 @@ action :create do
         end
 
         # Generate the new CSR using the existing key
-        csr = x509_generate_csr(
-          key,
-          :common_name => new_resource.cn || new_resource.name,
-          :city => node['x509']['city'],
-          :state => node['x509']['state'],
-          :email => node['x509']['email'],
-          :country => node['x509']['country'],
-          :department => node['x509']['department'],
-          :organization => node['x509']['organization']
-        )
+        csr = x509_generate_csr({
+          :key => key,
+          :name => {
+            :common_name => new_resource.cn || new_resource.name,
+            :city => node['x509']['city'],
+            :state => node['x509']['state'],
+            :email => node['x509']['email'],
+            :country => node['x509']['country'],
+            :department => node['x509']['department'],
+            :organization => node['x509']['organization']
+          },
+          :subject_alt_name => new_resource.subject_alt_name
+        })
         cert = nil
       else
         # Generate and encrypt the private key with the public key of
@@ -114,15 +117,19 @@ action :create do
 
         # Generate the CSR, and sign it with a scratch CA to create a
         # temporary certificate.
-        csr = x509_generate_csr(key,
-          :common_name => new_resource.cn || new_resource.name,
-          :city => node['x509']['city'],
-          :state => node['x509']['state'],
-          :email => node['x509']['email'],
-          :country => node['x509']['country'],
-          :department => node['x509']['department'],
-          :organization => node['x509']['organization']
-        )
+        csr = x509_generate_csr({
+          :key => key,
+          :name => {
+            :common_name => new_resource.cn || new_resource.name,
+            :city => node['x509']['city'],
+            :state => node['x509']['state'],
+            :email => node['x509']['email'],
+            :country => node['x509']['country'],
+            :department => node['x509']['department'],
+            :organization => node['x509']['organization']
+          },
+          :subject_alt_name => new_resource.subject_alt_name
+        })
         cert, ca = x509_issue_self_signed_cert(
           csr,
           new_resource.type,
@@ -132,7 +139,7 @@ action :create do
           :country => node['x509']['country'],
           :department => node['x509']['department'],
           :organization => node['x509']['organization']
-        )
+          )
       end
 
       node.set['csr_outbox'][new_resource.name] = {

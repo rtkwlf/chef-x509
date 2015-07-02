@@ -11,6 +11,7 @@ attribute :ca,   :kind_of => String, :required => true
 attribute :type, :kind_of => String, :default => 'server', :equal_to => ['server', 'client']
 attribute :bits, :kind_of => Fixnum, :default => 2048, :equal_to => [1024, 2048, 4096, 8192]
 attribute :days, :kind_of => Fixnum, :default => (365 * 5)
+attribute :subject_alt_name, :kind_of => Array, :default => Array.new
 
 attribute :owner, :kind_of => String, :default => 'root'
 attribute :group, :kind_of => String, :default => 'root'
