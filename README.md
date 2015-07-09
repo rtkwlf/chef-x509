@@ -1,10 +1,6 @@
 WARNING
 ===========
 
-The changes in this forked version of the cookbook are dependant on changes in the used Ruby gem EaSSL2. The required changes for the EaSSL2 Gem are offered in this pull request and still awaiting a merge
-
-https://github.com/chrisa/eassl/pull/2
-
 Description
 ===========
 
@@ -30,7 +26,7 @@ Chef Server
 
 "vt-gpg" Cookbook
 
-"eassl2", "gpgme" gems
+"eassl3", "gpgme" gems
 
 GnuPG 2.x
 
