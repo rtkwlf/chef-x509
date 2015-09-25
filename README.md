@@ -25,7 +25,7 @@ Chef Server
 
 "vt-gpg" Cookbook
 
-"eassl2", "gpgme" gems
+"eassl3", "gpgme" gems
 
 GnuPG 2.x
 

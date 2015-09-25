@@ -22,17 +22,17 @@ module ChefSSL
         @ca.certificate.subject.to_s
       end
 
-      def sign(req)
-        cert = @ca.create_certificate(req.csr, req.type, req.days)
+      def sign(req, digest)
+        cert = @ca.create_certificate(req.csr, req.type, req.days, digest)
         IssuedCertificate.new(req, cert, @ca)
       end
 
-      def self.create(name, path, passphrase)
+      def self.create(name, path, passphrase, ca_rsa_key_length, ca_cert_days, ca_digest)
         config = {
           :ca_dir => path,
           :password => passphrase,
-          :ca_rsa_key_length => 1024,
-          :ca_cert_days => 3650,
+          :ca_rsa_key_length => ca_rsa_key_length,
+          :ca_cert_days => ca_cert_days,
           :name => name
         }
         config[:serial_file] = File.join(config[:ca_dir], 'serial.txt')
@@ -67,7 +67,7 @@ module ChefSSL
         ]
         cert.add_extension ef.create_extension("authorityKeyIdentifier",
           "keyid:always,issuer:always")
-        cert.sign keypair, OpenSSL::Digest::SHA1.new
+        cert.sign keypair, ca_digest
 
         keypair_export = keypair.export OpenSSL::Cipher::DES.new(:EDE3, :CBC),
         config[:password]

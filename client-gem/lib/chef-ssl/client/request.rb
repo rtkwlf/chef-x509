@@ -2,7 +2,7 @@ module ChefSSL
   class Client
     class Request
 
-      attr_reader :host, :csr, :type, :ca, :id, :name, :key, :days
+      attr_reader :host, :csr, :type, :ca, :id, :name, :key, :days, :digest
       attr_writer :id, :ca, :host
 
       def initialize(host, data, csr=nil)
@@ -14,6 +14,7 @@ module ChefSSL
         @name = data['name']
         @key = data['key']
         @days = data['days'] || (365 * 5)
+        @digest = data['digest'] || 'SHA256'
       end
 
       def subject

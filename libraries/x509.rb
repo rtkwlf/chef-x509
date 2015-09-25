@@ -12,13 +12,14 @@ def x509_load_key(path)
   return EaSSL::Key.load(path)
 end
 
-def x509_generate_csr(key, name)
+def x509_generate_csr(key, digest, name)
+  digest = eval "OpenSSL::Digest::#{digest}.new"
   ea_name = EaSSL::CertificateName.new(name)
-  ea_csr  = EaSSL::SigningRequest.new(:name => ea_name, :key => key)
+  ea_csr  = EaSSL::SigningRequest.new(:name => ea_name, :key => key, :digest => digest)
   ea_csr
 end
 
-def x509_issue_self_signed_cert(csr, type, name)
+def x509_issue_self_signed_cert(csr, type, digest, name)
   # generate some randomness so that temporary CAs are unique, since
   # all the serial numbers are the same. some browsers will reject all
   # but the first with the same common name and serial, even if the
@@ -31,7 +32,8 @@ def x509_issue_self_signed_cert(csr, type, name)
     :signing_request => csr,
     :ca_certificate => ca.certificate
   )
-  cert.sign(ca.key)
+  digest = eval "OpenSSL::Digest::#{digest}.new"
+  cert.sign(ca.key, digest)
   return cert, ca
 end
 
