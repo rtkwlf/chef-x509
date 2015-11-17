@@ -53,6 +53,7 @@ EOPEM
 
   it "should generate a csr given a key and a DN" do
     key = x509_generate_key(1024)
+    digest = 'SHA256'
     name = {
       :common_name => 'cn',
       :city => 'city',
@@ -62,11 +63,42 @@ EOPEM
       :department => 'Dept',
       :organization => 'O'
     }
-    csr = x509_generate_csr(key, name)
+    csr = x509_generate_csr({
+      :key => key,
+      :name => name,
+      :digest => digest
+    })
     csr.class.should == EaSSL::SigningRequest
   end
 
+  it "should generate a csr given a key and a DN with a subjectAltName field" do
+    key = x509_generate_key(1024)
+    digest = 'SHA256'
+    name = {
+      :common_name => 'cn',
+      :city => 'city',
+      :state => 'state',
+      :email => 'email@example.com',
+      :country => 'GB',
+      :department => 'Dept',
+      :organization => 'O'
+    }
+    csr = x509_generate_csr({
+      :key => key,
+      :name => name,
+      :digest => digest,
+      :subject_alt_name => ["www.example.com", "example.com"]
+    })
+    csr.class.should == EaSSL::SigningRequest
+    # We trust EaSSL to appropriately add the SANs to the OpenSSL object,
+    # so it should be good enough to check that they are present in the
+    # options hash.
+    csr.options[:subject_alt_name].should include("www.example.com")
+    csr.options[:subject_alt_name].should include("example.com")
+  end
+
   it "should issue a self signed cert given a csr and a CA DN" do
+    digest = 'SHA256'
     name = {
       :common_name => 'cn',
       :city => 'city',
@@ -77,8 +109,12 @@ EOPEM
       :organization => 'O'
     }
     key = x509_generate_key(2048)
-    csr = x509_generate_csr(key, name)
-    cert, ca = x509_issue_self_signed_cert(csr, 'server', name)
+    csr = x509_generate_csr({
+      :key => key,
+      :name => name,
+      :digest => digest
+    })
+    cert, ca = x509_issue_self_signed_cert(csr, 'server', digest, name)
     cert.class.should == EaSSL::Certificate
     ca.class.should == EaSSL::CertificateAuthority
   end
