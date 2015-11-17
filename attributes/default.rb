@@ -10,3 +10,10 @@ default['x509']['city'] = 'London'
 default['x509']['organization'] = 'Example Ltd'
 default['x509']['department'] = 'Certificate Automation'
 default['x509']['email'] = 'x509-auto@example.com'
+
+default['x509']['tls_root'] = case node['platform_family']
+when 'rhel'
+  '/etc/pki/tls'
+else
+  '/etc/ssl'
+end

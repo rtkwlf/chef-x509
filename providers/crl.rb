@@ -3,9 +3,9 @@ action :create do
   if not new_resource.filename.nil?
     crl_file = new_resource.filename
   else
-    crl_file = "/etc/ssl/certs/#{item['hash']}.r0"
+    crl_file = ::File.join(node['x509']['tls_root'], 'certs', "#{item['hash']}}.r0")
   end
-  Chef::Log.info("MDH: filename: #{crl_file}")
+  Chef::Log.info("CRL filename: #{crl_file}")
   new_resource.filename = crl_file
   file crl_file do
     content item['crl']

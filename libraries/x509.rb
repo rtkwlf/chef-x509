@@ -12,10 +12,10 @@ def x509_load_key(path)
   return EaSSL::Key.load(path)
 end
 
-def x509_generate_csr(key, digest, name)
+def x509_generate_csr(info)
   digest = eval "OpenSSL::Digest::#{digest}.new"
-  ea_name = EaSSL::CertificateName.new(name)
-  ea_csr  = EaSSL::SigningRequest.new(:name => ea_name, :key => key, :digest => digest)
+  ea_name = EaSSL::CertificateName.new(info[:name])
+  ea_csr  = EaSSL::SigningRequest.new(info.merge({:name => ea_name}))
   ea_csr
 end
 
@@ -65,7 +65,7 @@ end
 #private get a crl item for the CA specified from the data bag
 def x509_get_crl(caname)
   # search for CRL in one of its issued certificate databags
-  items = search('certificate_revocation_list', "ca:#{caname}") 
+  items = search('certificate_revocation_list', "ca:#{caname}")
   if items.nil? or items.size == 0
     raise "Could not find CRL for CA '#{caname}'"
   elsif items.size > 1
@@ -75,7 +75,7 @@ def x509_get_crl(caname)
 end
 
 #for a caname in the certificate_revocation_list data bag, return the path to the file
-def x509_get_crl_path(caname) 
+def x509_get_crl_path(caname)
   item = x509_get_crl(caname)
-  return "/etc/ssl/certs/#{item['hash']}.r0"  
+  return ::File.join(node['x509']['tls_root'], 'certs', "#{item['hash']}}.r0")
 end

@@ -70,6 +70,18 @@ Webserver SSL certificate specifying key size and validity period:
       days 365
     end
 
+
+Webserver SSL certificate with subject alt names:
+
+    x509_certificate "www.example.com" do
+      ca "MyCA"
+      key "/etc/ssl/www.example.com.key"
+      certificate "/etc/ssl/www.example.com.cert"
+      bits 1024
+      days 365
+      subject_alt_name ["www.example.com", "example.com"]
+    end
+
 REST API Server Certificate, with CA Certificate:
 
     x509_certificate "service.example.com" do
@@ -95,8 +107,8 @@ CA Certificate only, for verification:
       cacertificate "/etc/myca.pem"
     end
 
-Retrieve the CRL for a CA. The resource name specified must match the 
---ca-name parameter used when running `chef-ssl gencrl`. Ideally we'd use the 
+Retrieve the CRL for a CA. The resource name specified must match the
+--ca-name parameter used when running `chef-ssl gencrl`. Ideally we'd use the
 DN of the CA but the format wreaks havoc on chef searches:
 
     x509_crl "My-CA" do
@@ -107,8 +119,8 @@ If you want you specify a path for the CRL file. However due to some oddities wi
 OpenVPN (and thus likely openssl) that are not fully documented, to function properly the
 CRL must be saved as /etc/ssl/certs/<hash>.r0 where the hash is that of the CA. The x509_crl
 provider by default does the hash generation and puts it in the correct place. If you need
-to find the the file to specify in another recipy, use the x509_get_crl_path() method 
-(defined in x509/libraries/x509.rb) and it will return the fully qualified path to the CRL. For 
+to find the the file to specify in another recipy, use the x509_get_crl_path() method
+(defined in x509/libraries/x509.rb) and it will return the fully qualified path to the CRL. For
 example:
 
     crl_path = x509_get_crl_path("My-CA")
@@ -206,12 +218,12 @@ Revoking Certificates
 A few notes about revoking certificates. This is a two step process on purpose. Some background:
 
  * There is no API in openssl to revoke certificates. It is done using the "openssl ca -revoke" command line.
- * To revoke a certificate you need the CA passphrase. Storing this insecurely is a horrible idea. 
+ * To revoke a certificate you need the CA passphrase. Storing this insecurely is a horrible idea.
  * The author had a requirement to support marking certificates as 'revoked' using tools other than chef-ssl (ie: python) but maintaining the workflow.
 
 So the two steps are:
 
-1) Using `chef-ssl revoke`, move the certificate from the "certificates" data bag to the "revoked\_certificates" data bag, adding "revoked: false", "serial" set with the certificate's serial number (in decimal) and "revoked\_date" with the current date/time. Other recipes, if required, can pull the list of revoked certificates and store them locally to reject new incoming connections as needed (ie: OpenVPN etc which supports a directory of decimal serial numbers as of v2.3, etc). This movement of the certificate data bag item can be easily emulated by other languages as well. 
+1) Using `chef-ssl revoke`, move the certificate from the "certificates" data bag to the "revoked\_certificates" data bag, adding "revoked: false", "serial" set with the certificate's serial number (in decimal) and "revoked\_date" with the current date/time. Other recipes, if required, can pull the list of revoked certificates and store them locally to reject new incoming connections as needed (ie: OpenVPN etc which supports a directory of decimal serial numbers as of v2.3, etc). This movement of the certificate data bag item can be easily emulated by other languages as well.
 
 2) Using `chef-ssl gencrl`, really revoke the certificates that are marked "revoked: false" using the openssl command, set "revoked: true" and add "revoked\_date\_v2" with the current date/time. Once that is done for any number of certificates, generate the CRL file using the `openssl ca -gencrl` command. Note that this command will generate the CRL for all revoked certificates including those revoked outside of the chef-ssl tool. For convenience the CRL file is uploaded to the `certificate_revocation_list` data bag.
 
@@ -262,7 +274,7 @@ A) If you've revoked it using `chef-ssl revoke oops.example.com` then you can re
 4. Upload the json file to the certificates data bag: `knife data bag from file certificates oops.example.com.json`
 5. Remove the item from the revoked data bag: `knife data bag delete revoked\_certificates 01234abc`
 
-If you've already run the `chef-ssl gencrl` command that certificate is beyond hope. Run chef-client again and the node should generate a new CSR. 
+If you've already run the `chef-ssl gencrl` command that certificate is beyond hope. Run chef-client again and the node should generate a new CSR.
 
 TESTING
 =======

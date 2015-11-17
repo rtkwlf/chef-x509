@@ -45,8 +45,6 @@ command :issue do |c|
     unless options.type == 'server' || options.type == 'client'
       raise "type must be server or client"
     end
-    
-    client = ChefSSL::Client.new
 
     authority = ChefSSL::Client.load_authority(
       :password => ask("Enter CA passphrase:  ") { |q| q.echo = false },
@@ -66,7 +64,7 @@ command :issue do |c|
       :email => h['emailAddress']
     }
 
-    req = ChefSSL::Client::Request.create(key, options.type, name)
+    req = ChefSSL::Client::Request.create(options.__hash__.update({ :key => key, :name => name }))
     digest = eval "OpenSSL::Digest::#{options.digest}.new"
     cert = authority.sign(req, digest)
 
@@ -82,7 +80,7 @@ command :issue do |c|
       end
       cert.req.host = options.host
       cert.save!
-    end 
+    end
 
     say "#{'Key:'.cyan}"
     say HighLine.color(key.private_key.to_s, :bright_black)
@@ -317,7 +315,7 @@ command :revoke do |c|
   c.action do |args, options|
     if args.size < 1
       say "Error, specify a HOSTNAME to revoke."
-    else 
+    else
       client = ChefSSL::Client.new
       args.each do |host|
         client.revoke_certificate(host)
