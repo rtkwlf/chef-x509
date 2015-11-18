@@ -84,7 +84,7 @@ EOCERT
     name = {
       :common_name => 'cn'
     }
-    req = ChefSSL::Client::Request.create(key, 'server', name)
+    req = ChefSSL::Client::Request.create({ :name => name, :key => key, :type => 'server'})
     req.class.should == ChefSSL::Client::Request
   end
 
