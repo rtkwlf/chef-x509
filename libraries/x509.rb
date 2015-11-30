@@ -77,5 +77,5 @@ end
 #for a caname in the certificate_revocation_list data bag, return the path to the file
 def x509_get_crl_path(caname)
   item = x509_get_crl(caname)
-  return ::File.join(node['x509']['tls_root'], 'certs', "#{item['hash']}}.r0")
+  return ::File.join(node['x509']['tls_root'], 'certs', "#{item['hash']}.r0")
 end
