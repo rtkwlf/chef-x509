@@ -75,7 +75,7 @@ PLATFORMS
 
 DEPENDENCIES
   chef (= 10.14.2)
-  eassl3
+  eassl3 (>= 3.0.3)
   flexmock
   gpgme
   rake

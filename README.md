@@ -1,7 +1,7 @@
 Description
 ===========
 
-This is a reinstanation of the original chef-cookbook-ssl from https://github.com/VendaTech/chef-cookbook-ssl
+This is a reinstantiation of the original chef-cookbook-ssl from https://github.com/VendaTech/chef-cookbook-ssl
 
 Cookbook to manage deployment of X509 certificates across an
 infrastructure.

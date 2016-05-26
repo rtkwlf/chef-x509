@@ -8,7 +8,7 @@ gem 'flexmock'
 gem 'rspec-extra-formatters'
 
 # cookbook deps
-gem 'eassl3'
+gem 'eassl3', '>= 3.0.3'
 gem 'gpgme'
 
 # pending https://github.com/calavera/rspec-chef/pull/5
