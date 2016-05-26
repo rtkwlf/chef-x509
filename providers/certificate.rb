@@ -107,6 +107,10 @@ action :create do
         if !new_resource.subject_alt_name.empty?
           info[:subject_alt_name] = new_resource.subject_alt_name
         end
+        
+        if !new_resource.extensions.empty?
+          info[:extensions] = new_resource.extensions
+        end
 
         csr = x509_generate_csr(info)
         cert = nil
@@ -139,6 +143,10 @@ action :create do
 
         if !new_resource.subject_alt_name.empty?
           info[:subject_alt_name] = new_resource.subject_alt_name
+        end
+
+        if !new_resource.extensions.empty?
+          info[:extensions] = new_resource.extensions
         end
 
         csr = x509_generate_csr(info)

@@ -13,11 +13,12 @@ command :issue do |c|
 
   c.option "--ca-path=STRING", String, "the path to the new CA"
   c.option "--dn=STRING", String, "the distinguished name for the new certificate"
-  c.option "--type=STRING", String, "the type of certificate, client or server"
+  c.option "--type=STRING", String, "the type of certificate, client, peer, server or custom"
   c.option "--digest=STRING", String, "the digest algorithm for the new certificate"
   c.option "--save", "save certificate in data bag, false by default"
   c.option "--host=STRING", String, "hostname to put in saved certificate, required if --save is specified"
   c.option "--ca-name=STRING", String, "Name of the CA to be used, default is the DN in the CA certificate"
+  c.option "--extensions=STRING", String, "Extensions for the certificate if type=custom is used, e.g. 'keyUsage:digitalSignature; extendedKeyUsage:serverAuth'"
 
   c.action do |args, options|
 
@@ -25,13 +26,15 @@ command :issue do |c|
 
     raise "CA path is required" unless options.ca_path
     raise "DN is required" unless options.dn
-    raise "type is required" unless options.type
-    raise "invalid digest" unless ['SHA', 'SHA1', 'SHA224', 'SHA256', 'SHA384', 'SHA512', 'MD5'].include? options.digest
+    raise "Type is required" unless options.type
+    raise "Invalid digest" unless ['SHA', 'SHA1', 'SHA224', 'SHA256', 'SHA384', 'SHA512', 'MD5'].include? options.digest
+    raise "Type must be server, peer, client or custom" unless ['server', 'client', 'peer', 'custom'].include? options.type
+    raise "Extensions need to be specified for type custom" unless options.type != 'custom' or options.extensions
 
     if options.save and not options.host
       raise "host required if --save is specified."
     end
-
+    
     begin
       dn = OpenSSL::X509::Name.parse(options.dn)
     rescue NoMethodError
@@ -40,10 +43,6 @@ command :issue do |c|
       raise "--dn is required and must be a distinguished name"
     rescue OpenSSL::X509::NameError => e
       raise "--dn must specify a valid DN: #{e.message}"
-    end
-
-    unless options.type == 'server' || options.type == 'client'
-      raise "type must be server or client"
     end
 
     authority = ChefSSL::Client.load_authority(
@@ -63,6 +62,10 @@ command :issue do |c|
       :organization => h['O'],
       :email => h['emailAddress']
     }
+    
+    if options.extensions
+      options.extensions = options.extensions.gsub("\s","").split(';').map { |ext| Hash[ [:name, :value].zip(ext.split(':')) ] }
+    end
 
     req = ChefSSL::Client::Request.create(options.__hash__.update({ :key => key, :name => name }))
     digest = eval "OpenSSL::Digest::#{options.digest}.new"
