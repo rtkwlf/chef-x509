@@ -47,6 +47,9 @@ DN components to use when creating certificate names:
  * `node['x509']['department']`
  * `node['x509']['email']`
 
+When a certificate is with `node['x509']['cert_expiry_upcoming_alert_days']`
+days of expiring the 'certificate' provider will touch the file path at `node['x509']['cert_expiry_upcoming_flag']`.
+
 Usage
 =====
 

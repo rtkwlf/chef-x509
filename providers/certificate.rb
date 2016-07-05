@@ -22,6 +22,12 @@ action :create do
       action :nothing
     end
   end
+  file node["x509"]["cert_expiry_upcoming_flag"] do
+    owner "root"
+    group "root"
+    mode "0644"
+    action :nothing
+  end
 
   name_sha = Digest::SHA256.new << new_resource.name
   cert_id = name_sha.to_s
@@ -62,6 +68,14 @@ action :create do
           f = resource("file[#{new_resource.cacertificate}]")
           f.content certbag['cacert']
           f.action :create
+        end
+
+        # Check for an upcoming certificate expiry
+        flag_f = resource("file[#{node['x509']['cert_expiry_upcoming_flag']}]")
+        if x509_certificate_expiry_upcoming(certbag['certificate'], node['x509']['cert_expiry_upcoming_alert_days'])
+          flag_f.action :touch
+        else
+          flag_f.action :delete
         end
       else
         Chef::Log.warn("not installing certificate #{new_resource.name} (id #{cert_id}), does not match key")

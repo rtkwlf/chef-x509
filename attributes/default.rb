@@ -17,3 +17,6 @@ when 'rhel'
 else
   '/etc/ssl'
 end
+
+default['x509']['cert_expiry_upcoming_flag'] = '/var/run/cert_expiry_upcoming.flag'
+default['x509']['cert_expiry_upcoming_alert_days'] = 30

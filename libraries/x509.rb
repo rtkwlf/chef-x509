@@ -79,3 +79,13 @@ def x509_get_crl_path(caname)
   item = x509_get_crl(caname)
   return ::File.join(node['x509']['tls_root'], 'certs', "#{item['hash']}.r0")
 end
+
+def x509_certificate_expiry_upcoming(cert_text, alert_days)
+  expiry = OpenSSL::X509::Certificate.new(cert_text).not_after
+  days_until_expiry = ((expiry - Time.now) / 86400).floor
+  Chef::Log.warn("Certificate expires in #{days_until_expiry} days at: #{expiry}")
+  if days_until_expiry < alert_days
+    return true
+  end
+  return false
+end
