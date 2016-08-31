@@ -7,11 +7,11 @@ Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.has_rdoc = true
   s.extra_rdoc_files = ["README.rdoc" ]
-  s.summary = "A command-line client the ssl cookbook's signing requirements"
+  s.summary = "A command-line client for the ssl cookbook's signing requirements"
   s.description = s.summary
-  s.author = "Venda"
-  s.email = "auto-ssl@venda.com"
-  s.homepage = "https://github.com/VendaTech/chef-cookbook-ssl"
+  s.author = "Arctic Wolf Networks"
+  s.email = "dev@arcticwolf.com"
+  s.homepage = "https://github.com/rtkwlf/chef-x509"
 
   s.add_dependency "chef",          ">= 0.10.0"
   s.add_dependency "spice",         "= 1.0.4"   # >= 1.0.6 brings breaking changes
