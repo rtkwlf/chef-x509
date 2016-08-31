@@ -37,6 +37,17 @@ module ChefSSL
       else
         verify_mode = OpenSSL::SSL::VERIFY_PEER
       end
+      
+      # if an SSL client cert or key is present, they need to be passed to Spice (and Faraday) as OpenSSL objects
+      ssl_client_cert = ssl_client_key = nil
+      if Chef::Config.ssl_client_cert
+        raw_cert = File.read Chef::Config.ssl_client_cert
+        ssl_client_cert = OpenSSL::X509::Certificate.new raw_cert
+      end
+      if Chef::Config.ssl_client_key
+        raw_key = File.read Chef::Config.ssl_client_key
+        ssl_client_key = OpenSSL::PKey.read raw_key
+      end
 
       Spice.setup do |s|
         s.server_url = chef_server_url
@@ -45,8 +56,8 @@ module ChefSSL
         s.connection_options = {
           :ssl => {
             :verify_mode => verify_mode,
-            :client_cert => Chef::Config.ssl_client_cert,
-            :client_key => Chef::Config.ssl_client_key,
+            :client_cert => ssl_client_cert,
+            :client_key => ssl_client_key,
             :ca_path => Chef::Config.ssl_ca_path,
             :ca_file => Chef::Config.ssl_ca_file,
           }

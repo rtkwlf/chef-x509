@@ -182,6 +182,7 @@ See the chef-ssl program's embedded help text for options:
       -v, --version        Display version information
       -t, --trace          Display backtrace when an error occurs
 
+To build the client gem, run `gem build chef-ssl-client.gemspec` in the `client-gem` directory.
 
 Workflow
 ========
