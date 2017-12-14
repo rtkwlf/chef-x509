@@ -73,11 +73,7 @@ module ChefSSL
     end
 
     def ca_search(ca=nil)
-      if ca
-        nodes = Spice.nodes("csr_outbox_*_ca:#{ca}")
-      else
-        nodes = Spice.nodes("csr_outbox_*")
-      end
+      nodes = Spice.nodes("csr_outbox_*")
       nodes.each do |node|
         next if node.normal['csr_outbox'].nil?
         node.normal['csr_outbox'].each do |id, data|
