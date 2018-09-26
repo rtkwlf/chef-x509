@@ -1,3 +1,9 @@
+NO LONGER MAINTAINED
+====================
+
+This cookbook is no longer maintained. The maintainers are actively moving away from using it in favour 
+of a completely new scheme.
+
 Description
 ===========
 
